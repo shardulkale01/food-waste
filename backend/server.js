@@ -97,6 +97,13 @@ app.get('/api/foods', async (req, res) => {
 // Sync user from Firebase (optional but good for tracking roles)
 app.post('/api/users', async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            console.log('⚠️ Database not ready for user sync');
+            return res.status(503).json({ 
+                message: 'Database not ready', 
+                detail: 'Please check MongoDB Atlas connection and IP whitelist.' 
+            });
+        }
         const { id, name, email, phone, role } = req.body;
 
         // Check if user already exists
