@@ -60,9 +60,12 @@ app.get('/', (req, res) => {
 app.post('/api/add-food', async (req, res) => {
     try {
         if (mongoose.connection.readyState !== 1) {
+            const states = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+            console.log(`⚠️ Request failed: Database is ${states[mongoose.connection.readyState] || 'unknown'}`);
             return res.status(503).json({ 
                 message: 'Database not ready', 
-                detail: 'Please check MongoDB Atlas connection.' 
+                detail: `State: ${states[mongoose.connection.readyState] || mongoose.connection.readyState}. URI Present: ${!!process.env.MONGO_URI}`,
+                tip: 'Check Render Environment Variables for MONGO_URI'
             });
         }
         const newFood = new FoodListing(req.body);
