@@ -11,12 +11,18 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/food-rescue';
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI || MONGO_URI.includes('localhost')) {
+    console.log('⚠️ Warning: MONGO_URI is not set or points to localhost.');
+    console.log('⚠️ Phase 2 requires a MongoDB Atlas connection string for persistent cloud storage.');
+}
+
 mongoose.connect(MONGO_URI)
-    .then(() => console.log('MongoDB connected successfully'))
+    .then(() => console.log('✅ MongoDB connected successfully to Atlas'))
     .catch(err => {
-        console.error('MongoDB connection error:', err.message);
-        console.log('⚠️ Running in DEMO MODE with in-memory storage');
+        console.error('❌ MongoDB connection error:', err.message);
+        console.log('💡 Tip: Ensure your IP is whitelisted in MongoDB Atlas and credentials are correct.');
     });
 
 // Models
@@ -54,9 +60,10 @@ app.get('/', (req, res) => {
 app.post('/api/add-food', async (req, res) => {
     try {
         if (mongoose.connection.readyState !== 1) {
-            const newFood = { ...req.body, _id: `mem-${Date.now()}`, createdAt: new Date() };
-            memFoods.push(newFood);
-            return res.status(201).json(newFood);
+            return res.status(503).json({ 
+                message: 'Database not ready', 
+                detail: 'Please check MongoDB Atlas connection.' 
+            });
         }
         const newFood = new FoodListing(req.body);
         const savedFood = await newFood.save();
