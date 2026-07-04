@@ -12,6 +12,15 @@ A full-stack web application that connects restaurants with surplus food to indi
 
 ## 📸 Features
 
+### 🖼️ Screenshots
+| Landing Page | User Map (NGO/Rescuer) |
+|--------------|-------------------------|
+| ![Landing Page](screenshots/landing_page.png) | ![User Map](screenshots/user_map.png) |
+
+| Restaurant Dashboard (Supplier Command) |
+|------------------------------------------|
+| ![Restaurant Dashboard](screenshots/restaurant_dashboard.png) |
+
 ### For Users / NGOs
 - **Interactive Map** — Browse nearby food listings on a real-time Leaflet map with GPS-based location detection
 - **Claim Food** — Reserve surplus food with a single click
