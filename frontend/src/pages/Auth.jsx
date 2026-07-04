@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth } from '../firebase';
 import {
@@ -6,7 +6,7 @@ import {
     signInWithEmailAndPassword,
     updateProfile
 } from 'firebase/auth';
-import { Heart, ArrowLeft, Loader2, Users, Store, Mail, Lock, Phone } from 'lucide-react';
+import { ArrowLeft, Loader2, Users, Store, Zap, Terminal } from 'lucide-react';
 
 export default function Auth({ onLogin }) {
     const navigate = useNavigate();
@@ -24,6 +24,18 @@ export default function Auth({ onLogin }) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    // Clear form when switching between Login / Signup or changing Roles
+    useEffect(() => {
+        setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            password: '',
+            restaurantName: ''
+        });
+        setError(null);
+    }, [isLogin, role]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
@@ -36,11 +48,18 @@ export default function Auth({ onLogin }) {
             if (isDemo) {
                 console.log('⚠️ Running in DEMO MODE (Mock Auth)');
                 await new Promise(r => setTimeout(r, 600));
+                
+                // Bug fix: Reuse same ID for logins in demo mode so dashboard postings persist
+                const demoId = isLogin 
+                    ? `demo-${role}` 
+                    : `demo-${role}-${Date.now()}`;
+                    
                 const demoName = role === 'restaurant'
-                    ? (formData.restaurantName || formData.name || 'Marble Cafe')
-                    : (formData.name || 'Sarah Doe');
+                    ? (formData.restaurantName || formData.name || 'Demo Restaurant')
+                    : (formData.name || 'Demo User');
+                    
                 user = {
-                    uid: `demo-${role}-${Date.now()}`,
+                    uid: demoId,
                     email: formData.email,
                     displayName: demoName
                 };
@@ -88,7 +107,7 @@ export default function Auth({ onLogin }) {
             localStorage.setItem('userRole', role);
             localStorage.setItem('mockUser', JSON.stringify(userData));
 
-            // Update App state directly — triggers immediate re-render & redirect
+            // Update App state directly
             if (onLogin) {
                 onLogin(userData, role);
             }
@@ -97,11 +116,11 @@ export default function Auth({ onLogin }) {
         } catch (err) {
             console.error(err);
             if (err.code === 'auth/email-already-in-use') {
-                setError('This email is already in use.');
+                setError('EMAIL ALREADY IN USE.');
             } else if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
-                setError('Invalid email or password.');
+                setError('INVALID CREDENTIALS.');
             } else {
-                setError('Authentication failed. Please check your credentials.');
+                setError('AUTHENTICATION FAILED.');
             }
         } finally {
             setLoading(false);
@@ -109,179 +128,162 @@ export default function Auth({ onLogin }) {
     };
 
     return (
-        <div className="min-h-screen marble-bg flex flex-col justify-center py-12 px-6 lg:px-8 relative overflow-hidden">
-            {/* Background elements */}
-            <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-emerald-50 rounded-full blur-3xl opacity-50"></div>
-            <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-sage-50 rounded-full blur-3xl opacity-50"></div>
-
-            <Link to="/" className="absolute top-8 left-8 flex items-center gap-2 text-[#8c7e6a] hover:text-[#1a1816] font-bold text-sm transition-all group z-10">
-                <div className="bg-white p-2 rounded-xl shadow-marble group-hover:shadow-marble-lg transition-all">
-                    <ArrowLeft size={16} />
-                </div>
-                Return Home
+        <div className="min-h-screen bg-[#f5f0e8] text-black font-['Inter',sans-serif] flex flex-col justify-center py-12 px-6 relative selection:bg-[#ff5722] selection:text-black">
+            
+            <Link to="/" className="absolute top-8 left-8 brutal-btn bg-white px-4 py-2 flex items-center gap-2 text-xs">
+                <ArrowLeft size={16} />
+                <span className="hidden sm:inline">ABORT</span>
             </Link>
 
-            <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 animate-fade-in-up">
-                <div className="flex justify-center mb-6">
-                    <div className="bg-[#1a1816] p-3 rounded-2xl shadow-xl">
-                        <Heart className="h-8 w-8 text-white fill-white" />
+            <div className="w-full max-w-md mx-auto animate-brutal-up">
+                
+                {/* Header */}
+                <div className="bg-[#1a1a1a] text-white p-6 border-[3px] border-black shadow-[6px_6px_0px_#ff5722] mb-8 flex items-center gap-4">
+                    <div className="bg-[#ff5722] p-3 border-[3px] border-black shadow-[4px_4px_0px_#000]">
+                        <Terminal className="text-black" size={24} strokeWidth={3} />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-black uppercase tracking-tight leading-none">
+                            {isLogin ? 'SYSTEM LOGIN' : 'INITIALIZE'}
+                        </h2>
+                        <p className="text-[10px] text-[#888] font-mono uppercase tracking-[0.2em] mt-1">
+                            {isLogin ? "Authenticate identity" : "Register new node"}
+                        </p>
                     </div>
                 </div>
-                <h2 className="text-center text-4xl font-black text-[#1a1816] tracking-tight">
-                    {isLogin ? 'Welcome Back' : 'Get Started'}
-                </h2>
-                <p className="mt-3 text-center text-[#6b6256] font-medium">
-                    {isLogin ? "Sign in to pick up where you left off." : "Join the movement and start saving food today."}
-                </p>
-            </div>
 
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md relative z-10 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                <div className="marble-card p-10 bg-white">
+                <div className="brutal-card bg-white p-8">
                     {/* Role Picker */}
-                    <div className="flex bg-[#f9f4ea] rounded-2xl p-1 mb-8 border border-[#efeadc]">
+                    <div className="flex border-[3px] border-black shadow-[4px_4px_0px_#000] mb-8 bg-[#f5f0e8]">
                         <button
-                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${role === 'user' ? 'bg-white text-[#1a1816] shadow-sm' : 'text-[#8c7e6a] hover:text-[#1a1816]'}`}
+                            className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-black uppercase tracking-widest transition-all ${role === 'user' ? 'bg-[#ff5722] text-black border-r-[3px] border-black' : 'text-[#666] hover:text-black hover:bg-white border-r-[3px] border-black'}`}
                             onClick={() => setRole('user')}
                             type="button"
                         >
-                            <Users size={18} />
-                            User / NGO
+                            <Users size={16} />
+                            RESCUER
                         </button>
                         <button
-                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all ${role === 'restaurant' ? 'bg-white text-[#1a1816] shadow-sm' : 'text-[#8c7e6a] hover:text-[#1a1816]'}`}
+                            className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-black uppercase tracking-widest transition-all ${role === 'restaurant' ? 'bg-[#ff5722] text-black' : 'text-[#666] hover:text-black hover:bg-white'}`}
                             onClick={() => setRole('restaurant')}
                             type="button"
                         >
-                            <Store size={18} />
-                            Restaurant
+                            <Store size={16} />
+                            SUPPLIER
                         </button>
                     </div>
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                        {/* Restaurant name field — shown during BOTH sign-up and sign-in when role is restaurant */}
-                        {(role === 'restaurant') && (
-                            <div className="animate-fade-in">
-                                <label className="block text-xs font-bold text-[#8c7e6a] uppercase tracking-widest mb-2 ml-1">
-                                    Restaurant Name
+                    <form className="space-y-5" onSubmit={handleSubmit}>
+                        
+                        {(!isLogin && role === 'restaurant') && (
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest mb-1">
+                                    ESTABLISHMENT NAME
                                 </label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#8c7e6a]">
-                                        <Store size={16} />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        required
-                                        className="block w-full rounded-2xl bg-[#fdfaf5] border border-[#f3f0e8] pl-11 pr-4 py-4 text-sm text-[#2d2a26] font-medium focus:ring-4 focus:ring-emerald-50"
-                                        value={formData.restaurantName}
-                                        onChange={(e) => setFormData({ ...formData, restaurantName: e.target.value })}
-                                        placeholder="e.g. Pasta Palace"
-                                    />
-                                </div>
+                                <input
+                                    type="text"
+                                    required
+                                    className="brutal-input w-full p-4 text-sm"
+                                    value={formData.restaurantName}
+                                    onChange={(e) => setFormData({ ...formData, restaurantName: e.target.value })}
+                                    placeholder="ENTER NAME..."
+                                />
                             </div>
                         )}
 
                         {!isLogin && (
-                            <div className="grid grid-cols-1 gap-6 animate-fade-in">
+                            <>
                                 {role !== 'restaurant' && (
                                     <div>
-                                        <label className="block text-xs font-bold text-[#8c7e6a] uppercase tracking-widest mb-2 ml-1">
-                                            Full Name
+                                        <label className="block text-[10px] font-black uppercase tracking-widest mb-1">
+                                            OPERATOR NAME
                                         </label>
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                required
-                                                className="block w-full rounded-2xl bg-[#fdfaf5] border border-[#f3f0e8] px-4 py-4 text-sm text-[#2d2a26] font-medium focus:ring-4 focus:ring-emerald-50"
-                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                placeholder="e.g. John Doe"
-                                            />
-                                        </div>
+                                        <input
+                                            type="text"
+                                            required
+                                            className="brutal-input w-full p-4 text-sm"
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                            placeholder="ENTER DESIGNATION..."
+                                        />
                                     </div>
                                 )}
                                 <div>
-                                    <label className="block text-xs font-bold text-[#8c7e6a] uppercase tracking-widest mb-2 ml-1">
-                                        Phone Number
+                                    <label className="block text-[10px] font-black uppercase tracking-widest mb-1">
+                                        COMMLINK (PHONE)
                                     </label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#8c7e6a]">
-                                            <Phone size={16} />
-                                        </div>
-                                        <input
-                                            type="tel"
-                                            required
-                                            className="block w-full rounded-2xl bg-[#fdfaf5] border border-[#f3f0e8] pl-11 pr-4 py-4 text-sm text-[#2d2a26] font-medium focus:ring-4 focus:ring-emerald-50"
-                                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            placeholder="+91 98765 43210"
-                                        />
-                                    </div>
+                                    <input
+                                        type="tel"
+                                        required
+                                        className="brutal-input w-full p-4 text-sm"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                        placeholder="ENTER NUMBER..."
+                                    />
                                 </div>
-                            </div>
+                            </>
                         )}
 
                         <div>
-                            <label className="block text-xs font-bold text-[#8c7e6a] uppercase tracking-widest mb-2 ml-1">
-                                Email Address
+                            <label className="block text-[10px] font-black uppercase tracking-widest mb-1">
+                                EMAIL IDENTIFIER
                             </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#8c7e6a]">
-                                    <Mail size={16} />
-                                </div>
-                                <input
-                                    type="email"
-                                    required
-                                    className="block w-full rounded-2xl bg-[#fdfaf5] border border-[#f3f0e8] pl-11 pr-4 py-4 text-sm text-[#2d2a26] font-medium focus:ring-4 focus:ring-emerald-50"
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="your@email.com"
-                                />
-                            </div>
+                            <input
+                                type="email"
+                                required
+                                className="brutal-input w-full p-4 text-sm"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                placeholder="ENTER EMAIL..."
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-[#8c7e6a] uppercase tracking-widest mb-2 ml-1">
-                                Password
+                            <label className="block text-[10px] font-black uppercase tracking-widest mb-1">
+                                ACCESS CODE (PASSWORD)
                             </label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#8c7e6a]">
-                                    <Lock size={16} />
-                                </div>
-                                <input
-                                    type="password"
-                                    required
-                                    className="block w-full rounded-2xl bg-[#fdfaf5] border border-[#f3f0e8] pl-11 pr-4 py-4 text-sm text-[#2d2a26] font-medium focus:ring-4 focus:ring-emerald-50"
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    placeholder="••••••••"
-                                />
-                            </div>
+                            <input
+                                type="password"
+                                required
+                                className="brutal-input w-full p-4 text-sm"
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                placeholder="••••••••"
+                            />
                         </div>
 
                         {error && (
-                            <div className="text-red-600 text-[10px] font-bold uppercase tracking-widest bg-red-50 p-3 rounded-xl border border-red-100 text-center">
-                                {error}
+                            <div className="bg-black text-[#ff5722] text-[10px] font-black uppercase tracking-widest p-3 border-[3px] border-[#ff5722] shadow-[4px_4px_0px_#ff5722] flex items-center justify-center">
+                                ERR: {error}
                             </div>
                         )}
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full flex justify-center items-center gap-3 py-5 px-4 rounded-2xl bg-[#1a1816] text-white text-sm font-black uppercase tracking-widest shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="brutal-btn w-full flex justify-center items-center gap-3 py-4 mt-4 bg-[#ff5722] text-black text-sm disabled:opacity-50"
                         >
                             {loading ? (
                                 <Loader2 size={20} className="animate-spin" />
                             ) : (
-                                isLogin ? 'Sign In' : 'Create Account'
+                                <>
+                                    {isLogin ? 'EXECUTE LOGIN' : 'EXECUTE REGISTRATION'}
+                                    <Zap size={16} />
+                                </>
                             )}
                         </button>
                     </form>
+                </div>
 
-                    <div className="mt-8 text-center pt-6 border-t border-[#f3f0e8]">
-                        <button
-                            type="button"
-                            onClick={() => setIsLogin(!isLogin)}
-                            className="text-xs font-bold text-[#8c7e6a] hover:text-emerald-700 transition"
-                        >
-                            {isLogin ? "DON'T HAVE AN ACCOUNT? SIGN UP" : "ALREADY HAVE AN ACCOUNT? SIGN IN"}
-                        </button>
-                    </div>
+                {/* Toggle */}
+                <div className="mt-8 text-center">
+                    <button
+                        type="button"
+                        onClick={() => setIsLogin(!isLogin)}
+                        className="text-[10px] font-black uppercase tracking-widest text-[#1a1a1a] hover:text-[#ff5722] hover:bg-black px-4 py-2 border-[2px] border-transparent hover:border-black transition-all"
+                    >
+                        {isLogin ? "NO ACCESS? INITIALIZE NEW NODE →" : "HAVE ACCESS? RETURN TO LOGIN →"}
+                    </button>
                 </div>
             </div>
         </div>

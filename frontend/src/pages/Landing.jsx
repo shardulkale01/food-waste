@@ -1,134 +1,128 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Heart, Clock, Utensils, ArrowRight, Sparkles, ShieldCheck, Globe } from 'lucide-react';
+import { MapPin, ArrowRight, ShieldCheck, Globe, Zap, AlertTriangle } from 'lucide-react';
 
 export default function Landing() {
     return (
-        <div className="min-h-screen marble-bg text-[#2d2a26]">
+        <div className="min-h-screen bg-[#f5f0e8] text-black font-['Inter',sans-serif] selection:bg-[#ff5722] selection:text-black">
             {/* Nav */}
-            <header className="px-8 py-5 flex justify-between items-center bg-white/50 border-b border-[#f3f0e8] sticky top-0 z-50 backdrop-blur-sm">
-                <div className="flex items-center gap-2.5">
-                    <div className="bg-emerald-600 p-1.5 rounded-lg shadow-sm">
-                        <Heart className="text-white fill-white" size={20} />
+            <header className="px-6 py-4 flex justify-between items-center bg-[#1a1a1a] border-b-[4px] border-[#ff5722] sticky top-0 z-50">
+                <div className="flex items-center gap-4">
+                    <div className="bg-[#ff5722] p-2 border-[3px] border-black shadow-[4px_4px_0px_#000]">
+                        <Zap className="text-black" size={24} strokeWidth={3} />
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-[#1a1816]">Food Rescue Map</span>
+                    <span className="text-2xl font-black tracking-[-0.05em] text-white uppercase">FOOD // RESCUE</span>
                 </div>
                 <Link
                     to="/auth"
-                    className="text-emerald-700 font-semibold hover:text-emerald-800 flex items-center gap-1.5 transition-all text-sm px-4 py-2 rounded-full border border-emerald-100 bg-emerald-50/50"
+                    className="brutal-btn bg-[#ff5722] hover:bg-[#e64a19] text-black px-6 py-2.5 text-sm"
                 >
-                    Sign In <ArrowRight size={14} />
+                    SIGN IN <ArrowRight size={16} className="inline ml-1" />
                 </Link>
             </header>
 
             {/* Hero Section */}
-            <main className="container mx-auto px-6 pt-24 pb-20 max-w-6xl">
-                <div className="text-center animate-fade-in-up">
-                    <div className="inline-flex items-center gap-2 bg-[#f9f4ea] text-[#8c7e6a] px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase mb-8 border border-[#efeadc]">
-                        <Sparkles size={14} className="text-emerald-600" />
-                        A Better Way to Share
+            <main className="px-6 pt-20 pb-20 max-w-[1400px] mx-auto">
+                <div className="flex flex-col items-start animate-brutal-up">
+                    <div className="inline-flex items-center gap-2 bg-black text-white px-4 py-1 border-[3px] border-black shadow-[4px_4px_0px_#ff5722] text-xs font-black tracking-[0.2em] uppercase mb-8">
+                        <AlertTriangle size={14} className="text-[#ff5722]" />
+                        SYSTEM ACTIVE
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-black text-[#1a1816] leading-[1.05] mb-8 tracking-tighter">
-                        Find fresh food nearby<br />
-                        <span className="text-emerald-600 italic font-serif">save money, </span>
-                        save waste.
+                    <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-black leading-[0.9] mb-8 tracking-tighter uppercase">
+                        STOP <span className="text-[#ff5722] mix-blend-multiply">WASTING</span> <br />
+                        START SAVING.
                     </h1>
 
-                    <p className="text-lg md:text-xl text-[#6b6256] mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
-                        Connecting restaurants with surplus fresh food to individuals
-                        and NGOs on an elegant, real-time map.
+                    <p className="text-xl md:text-2xl text-black font-bold mb-12 max-w-3xl leading-snug border-l-[6px] border-[#ff5722] pl-6 py-2 bg-white/50">
+                        SURPLUS FOOD IS NOT TRASH. CONNECT DIRECTLY WITH RESTAURANTS TO RESCUE FRESH MEALS BEFORE THEY HIT THE LANDFILL.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
+                    <div className="flex flex-col sm:flex-row gap-6 items-center">
                         <Link
                             to="/auth"
-                            className="bg-[#1a1816] text-white text-lg font-bold py-4.5 px-12 rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 active:scale-95 flex items-center gap-3"
+                            className="brutal-btn bg-[#ff5722] text-black text-xl py-4 px-10 flex items-center gap-3 w-full sm:w-auto justify-center"
                         >
-                            Get Started
-                            <ArrowRight size={20} />
+                            INITIATE RESCUE
+                            <ArrowRight size={24} strokeWidth={3} />
                         </Link>
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3, 4].map(i => (
-                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#f3f0e8] flex items-center justify-center overflow-hidden">
-                                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`} alt="user" />
-                                </div>
-                            ))}
-                            <div className="w-10 h-10 rounded-full border-2 border-white bg-emerald-50 text-emerald-700 text-[10px] font-bold flex items-center justify-center">
-                                +500
-                            </div>
+                        <div className="brutal-card bg-white px-6 py-3 flex items-center gap-4">
+                            <span className="font-black text-3xl">500+</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-[#666] leading-tight">
+                                ACTIVE<br />RESCUERS
+                            </span>
                         </div>
                     </div>
                 </div>
 
                 {/* Feature Grid */}
-                <div className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                    <div className="marble-card p-8">
-                        <div className="w-14 h-14 bg-sage-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 border border-emerald-50">
-                            <MapPin size={28} />
+                <div className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-8 animate-brutal-up" style={{ animationDelay: '0.1s' }}>
+                    <div className="brutal-card bg-white p-8 group">
+                        <div className="w-16 h-16 bg-[#ff5722] border-[3px] border-black shadow-[4px_4px_0px_#000] flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                            <MapPin size={32} strokeWidth={2.5} className="text-black" />
                         </div>
-                        <h3 className="text-xl font-bold mb-3 text-[#1a1816]">Real-time Map</h3>
-                        <p className="text-[#6b6256] leading-relaxed font-medium">
-                            Live distance-calculated map helps you find the freshest options just blocks away.
+                        <h3 className="text-2xl font-black mb-4 uppercase tracking-tight">LIVE RADAR</h3>
+                        <p className="text-black font-bold text-sm uppercase tracking-wider leading-relaxed opacity-80">
+                            REAL-TIME TRACKING OF SURPLUS FOOD IN YOUR IMMEDIATE VICINITY. NO DELAYS.
                         </p>
                     </div>
 
-                    <div className="marble-card p-8">
-                        <div className="w-14 h-14 bg-sage-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 border border-emerald-50">
-                            <ShieldCheck size={28} />
+                    <div className="brutal-card bg-[#1a1a1a] text-white p-8 group">
+                        <div className="w-16 h-16 bg-[#00e676] border-[3px] border-black shadow-[4px_4px_0px_#ff5722] flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                            <ShieldCheck size={32} strokeWidth={2.5} className="text-black" />
                         </div>
-                        <h3 className="text-xl font-bold mb-3 text-[#1a1816]">Verified Listings</h3>
-                        <p className="text-[#6b6256] leading-relaxed font-medium">
-                            Every restaurant is manually verified to ensure food safety and quality standards.
+                        <h3 className="text-2xl font-black mb-4 uppercase tracking-tight">VERIFIED NODES</h3>
+                        <p className="text-white font-bold text-sm uppercase tracking-wider leading-relaxed opacity-80">
+                            STRICT VETTING PROCESS FOR ALL PARTNERING ESTABLISHMENTS. SAFETY GUARANTEED.
                         </p>
                     </div>
 
-                    <div className="marble-card p-8">
-                        <div className="w-14 h-14 bg-sage-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 border border-emerald-50">
-                            <Globe size={28} />
+                    <div className="brutal-card bg-white p-8 group">
+                        <div className="w-16 h-16 bg-[#ff5722] border-[3px] border-black shadow-[4px_4px_0px_#000] flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                            <Globe size={32} strokeWidth={2.5} className="text-black" />
                         </div>
-                        <h3 className="text-xl font-bold mb-3 text-[#1a1816]">Impact Driven</h3>
-                        <p className="text-[#6b6256] leading-relaxed font-medium">
-                            Join a global movement reducing carbon footprint by preventing landfill waste.
+                        <h3 className="text-2xl font-black mb-4 uppercase tracking-tight">GLOBAL IMPACT</h3>
+                        <p className="text-black font-bold text-sm uppercase tracking-wider leading-relaxed opacity-80">
+                            MINIMIZE CARBON EMISSIONS BY INTERCEPTING FOOD WASTE AT THE SOURCE.
                         </p>
                     </div>
                 </div>
 
-                {/* How it Works - Warm Marble Style */}
-                <div className="mt-32 p-12 bg-white border border-[#f3f0e8] rounded-[40px] shadow-marble overflow-hidden relative">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50/50 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                    <div className="relative z-10 text-center mb-16">
-                        <h2 className="text-3xl font-black text-[#1a1816]">Simple as 1-2-3</h2>
-                        <div className="h-1 w-12 bg-emerald-500 mx-auto mt-4 rounded-full"></div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
-                        <div className="text-center group">
-                            <div className="w-12 h-12 bg-[#1a1816] text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-6 group-hover:scale-110 transition-transform">1</div>
-                            <h4 className="font-bold text-[#1a1816] mb-2">Sign Up</h4>
-                            <p className="text-sm text-[#6b6256]">Join as a Restaurant or a Rescuer in seconds.</p>
-                        </div>
-                        <div className="text-center group">
-                            <div className="w-12 h-12 bg-[#1a1816] text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-6 group-hover:scale-110 transition-transform">2</div>
-                            <h4 className="font-bold text-[#1a1816] mb-2">Find & Connect</h4>
-                            <p className="text-sm text-[#6b6256]">Explore the map and reach out via WhatsApp.</p>
-                        </div>
-                        <div className="text-center group">
-                            <div className="w-12 h-12 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-6 group-hover:scale-110 transition-transform">3</div>
-                            <h4 className="font-bold text-[#1a1816] mb-2">Save Food</h4>
-                            <p className="text-sm text-[#6b6256]">Pickup your meal and make a difference.</p>
+                {/* How it Works */}
+                <div className="mt-32 brutal-card bg-[#ff5722] p-12 relative overflow-hidden">
+                    <div className="relative z-10">
+                        <h2 className="text-5xl md:text-7xl font-black text-black uppercase tracking-tighter mb-16">
+                            PROTOCOL
+                        </h2>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                            <div className="border-[3px] border-black bg-white p-6 shadow-[6px_6px_0px_#000]">
+                                <div className="text-6xl font-black text-black opacity-20 absolute -mt-10 -ml-2">01</div>
+                                <h4 className="font-black text-xl mb-4 mt-4 uppercase">AUTHENTICATE</h4>
+                                <p className="text-sm font-bold uppercase tracking-wider opacity-80">Register as a supplier or rescuer within the system.</p>
+                            </div>
+                            <div className="border-[3px] border-black bg-white p-6 shadow-[6px_6px_0px_#000]">
+                                <div className="text-6xl font-black text-black opacity-20 absolute -mt-10 -ml-2">02</div>
+                                <h4 className="font-black text-xl mb-4 mt-4 uppercase">LOCATE</h4>
+                                <p className="text-sm font-bold uppercase tracking-wider opacity-80">Scan the live map for available drops nearby.</p>
+                            </div>
+                            <div className="border-[3px] border-black bg-[#1a1a1a] text-white p-6 shadow-[6px_6px_0px_#000]">
+                                <div className="text-6xl font-black text-[#ff5722] opacity-40 absolute -mt-10 -ml-2">03</div>
+                                <h4 className="font-black text-xl mb-4 mt-4 uppercase text-[#ff5722]">EXECUTE</h4>
+                                <p className="text-sm font-bold uppercase tracking-wider opacity-80">Claim and extract the surplus before the deadline.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </main>
 
-            <footer className="bg-white border-t border-[#f3f0e8] py-16">
-                <div className="container mx-auto px-6 max-w-6xl text-center">
-                    <div className="flex items-center justify-center gap-2 mb-6">
-                        <Heart className="text-emerald-600 fill-emerald-600" size={20} />
-                        <span className="text-lg font-bold">Food Rescue Map</span>
+            <footer className="bg-black border-t-[4px] border-[#ff5722] py-12 px-6 mt-20">
+                <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="flex items-center gap-3">
+                        <Zap className="text-[#ff5722]" size={24} strokeWidth={3} />
+                        <span className="text-xl font-black text-white uppercase tracking-widest">FOOD // RESCUE</span>
                     </div>
-                    <p className="text-sm text-[#8c7e6a] font-medium">
-                        © 2026 Food Rescue Project · For a greener planet.
+                    <p className="text-xs text-white font-mono uppercase tracking-[0.2em]">
+                        © 2026 // ZERO WASTE PROTOCOL
                     </p>
                 </div>
             </footer>

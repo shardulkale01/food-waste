@@ -5,7 +5,7 @@ import { signOut } from 'firebase/auth';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { LogOut, Navigation, Phone, MessageCircle, AlertCircle } from 'lucide-react';
+import { LogOut, Navigation, Phone, MessageCircle, AlertCircle, X, ChevronDown, MapPin, Clock, Zap } from 'lucide-react';
 
 // Fix Leaflet marker icons issue in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -173,132 +173,221 @@ export default function UserMap({ user, onLogout }) {
     const [showList, setShowList] = useState(false);
 
     return (
-        <div className="h-screen flex flex-col bg-[#f9f4ea] font-sans">
-            <nav className="bg-[#fdfaf5] shadow-sm border-b border-[#f3f0e8] px-8 py-5 flex justify-between items-center z-[1000] relative">
-                <div className="flex items-center gap-3">
-                    <div className="bg-[#1a1816] p-2 rounded-xl shadow-sm">
-                        <Navigation className="text-[#fdfaf5]" size={20} />
+        <div className="h-screen flex flex-col bg-[#f5f0e8] font-['Inter',sans-serif]">
+            {/* ─── BRUTALIST NAV ─── */}
+            <nav className="brutal-nav bg-[#1a1a1a] border-b-[4px] border-[#ff5722] px-6 py-4 flex justify-between items-center z-[1000] relative">
+                <div className="flex items-center gap-4">
+                    <div className="bg-[#ff5722] p-2.5 border-[3px] border-black shadow-[4px_4px_0px_#000]">
+                        <Navigation className="text-white" size={20} />
                     </div>
                     <div>
-                        <h1 className="text-xl font-black tracking-tight text-[#1a1816]">Nearby Food</h1>
-                        <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest leading-none mt-1">Food Rescue Map</p>
+                        <h1 className="text-xl font-black tracking-[-0.05em] text-white uppercase">
+                            FOOD // RESCUE
+                        </h1>
+                        <p className="text-[10px] font-black text-[#ff5722] uppercase tracking-[0.3em] leading-none mt-0.5">
+                            LIVE MAP INTERFACE
+                        </p>
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                     <button
                         onClick={() => setShowList(!showList)}
-                        className="flex items-center gap-2 bg-[#fdfaf5] hover:bg-[#f3f0e8] border border-[#efeadc] text-[#2d2a26] px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-sm"
+                        className="brutal-btn flex items-center gap-2 bg-[#ff5722] hover:bg-[#e64a19] border-[3px] border-black text-black px-5 py-2.5 font-black text-xs uppercase tracking-widest transition-all shadow-[4px_4px_0px_#000] hover:shadow-[2px_2px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px]"
                     >
-                        🍽️ {foods.length} Restaurant{foods.length !== 1 ? 's' : ''} Available
+                        <Zap size={14} />
+                        <span className="hidden sm:inline">{foods.length} LISTING{foods.length !== 1 ? 'S' : ''}</span>
+                        <span className="sm:hidden">{foods.length}</span>
+                        <ChevronDown size={14} className={`transition-transform ${showList ? 'rotate-180' : ''}`} />
                     </button>
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 text-[#8c7e6a] hover:text-red-600 font-bold text-sm transition-all px-4 py-2 rounded-xl hover:bg-red-50"
+                        className="brutal-btn flex items-center gap-2 bg-transparent hover:bg-red-600 border-[3px] border-[#555] hover:border-red-600 text-[#888] hover:text-white font-black text-xs uppercase tracking-widest transition-all px-4 py-2.5 shadow-[3px_3px_0px_#333] hover:shadow-[2px_2px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px]"
                     >
-                        <LogOut size={18} />
-                        <span className="hidden sm:inline">Sign Out</span>
+                        <LogOut size={16} />
+                        <span className="hidden sm:inline">EXIT</span>
                     </button>
                 </div>
             </nav>
 
-            <main className="flex-1 relative flex">
-                {/* Sidebar - Restaurant List */}
+            <main className="flex-1 relative flex overflow-hidden">
+                {/* ─── SIDEBAR — RESTAURANT LIST ─── */}
                 {showList && (
-                    <div className="w-80 bg-[#fdfaf5] border-r border-[#f3f0e8] overflow-y-auto z-[500] shadow-xl">
-                        <div className="p-5 border-b border-[#f3f0e8] bg-[#fdfaf5] sticky top-0 z-10">
-                            <div className="flex bg-[#f9f4ea] p-1 rounded-xl border border-[#efeadc] mb-4">
+                    <div className="w-96 bg-[#1a1a1a] border-r-[4px] border-[#ff5722] overflow-y-auto z-[500] brutal-sidebar flex flex-col">
+                        {/* Sidebar Header */}
+                        <div className="p-5 border-b-[3px] border-[#333] bg-[#111] sticky top-0 z-10">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="font-black text-white text-lg uppercase tracking-tight">
+                                    {viewMode === 'available' ? 'AVAILABLE' : 'MY CLAIMS'}
+                                </h2>
+                                <button
+                                    onClick={() => setShowList(false)}
+                                    className="text-[#666] hover:text-white transition-colors p-1"
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
+                            {/* Toggle Tabs */}
+                            <div className="flex border-[3px] border-[#333] overflow-hidden">
                                 <button
                                     onClick={() => setViewMode('available')}
-                                    className={`flex-1 text-[10px] font-bold py-2 rounded-lg transition-all ${viewMode === 'available' ? 'bg-[#fdfaf5] text-[#1a1816] shadow-sm' : 'text-[#8c7e6a] hover:text-[#1a1816]'}`}
+                                    className={`flex-1 text-[10px] font-black py-2.5 uppercase tracking-[0.2em] transition-all ${viewMode === 'available'
+                                        ? 'bg-[#ff5722] text-black border-r-[3px] border-[#333]'
+                                        : 'bg-[#222] text-[#666] hover:text-white border-r-[3px] border-[#333]'
+                                        }`}
                                 >
-                                    AVAILABLE
+                                    AVAILABLE ({foods.length})
                                 </button>
                                 <button
                                     onClick={() => setViewMode('claims')}
-                                    className={`flex-1 text-[10px] font-bold py-2 rounded-lg transition-all ${viewMode === 'claims' ? 'bg-[#fdfaf5] text-[#1a1816] shadow-sm' : 'text-[#8c7e6a] hover:text-[#1a1816]'}`}
+                                    className={`flex-1 text-[10px] font-black py-2.5 uppercase tracking-[0.2em] transition-all ${viewMode === 'claims'
+                                        ? 'bg-[#ff5722] text-black'
+                                        : 'bg-[#222] text-[#666] hover:text-white'
+                                        }`}
                                 >
-                                    MY CLAIMS
+                                    CLAIMED ({myClaims.length})
                                 </button>
                             </div>
-                            <h2 className="font-black tracking-tight text-[#1a1816] text-lg">
-                                {viewMode === 'available' ? `Nearby Food (${foods.length})` : `My Claims (${myClaims.length})`}
-                            </h2>
                         </div>
 
-                        {viewMode === 'available' ? (
-                            foods.length === 0 ? (
-                                <div className="p-8 text-center text-[#8c7e6a] text-sm font-bold">
-                                    No food available right now.
-                                </div>
-                            ) : (
-                                foods.map((food) => (
-                                    <div
-                                        key={food._id}
-                                        className="p-5 border-b border-[#f3f0e8] bg-[#fdfaf5] hover:bg-[#f9f4ea] cursor-pointer transition-all"
-                                        onClick={() => {
-                                            setUserLoc([food.latitude, food.longitude]);
-                                        }}
-                                    >
-                                        <h3 className="font-black text-[#1a1816] text-base">{food.restaurantName}</h3>
-                                        <p className="text-[#6b6256] text-sm mt-1 font-medium">{food.foodName}</p>
-                                        <div className="flex justify-between items-center mt-3">
-                                            <span className="text-xs text-[#8c7e6a] font-bold">Qty: {food.quantity}</span>
-                                            <span className={`text-xs font-black px-2 py-1 rounded-md ${food.price === 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-[#f3f0e8] text-[#2d2a26]'}`}>
-                                                {food.price === 0 ? 'FREE' : `₹${food.price}`}
-                                            </span>
+                        {/* Sidebar Content */}
+                        <div className="flex-1 overflow-y-auto">
+                            {viewMode === 'available' ? (
+                                foods.length === 0 ? (
+                                    <div className="p-8 text-center">
+                                        <div className="text-[#555] text-sm font-black uppercase tracking-widest">
+                                            NO FOOD AVAILABLE
                                         </div>
+                                        <p className="text-[#444] text-xs mt-2 font-mono">Check back later.</p>
                                     </div>
-                                ))
-                            )
-                        ) : (
-                            myClaims.length === 0 ? (
-                                <div className="p-8 text-center text-[#8c7e6a] text-sm font-bold">
-                                    You haven't claimed any food yet.
-                                </div>
-                            ) : (
-                                myClaims.map((food) => (
-                                    <div
-                                        key={food._id}
-                                        className="p-5 border-b border-[#f3f0e8] bg-[#fdfaf5] hover:bg-[#f9f4ea] cursor-pointer transition-all"
-                                        onClick={() => {
-                                            setUserLoc([food.latitude, food.longitude]);
-                                        }}
-                                    >
-                                        <div className="flex justify-between items-start">
-                                            <h3 className="font-black text-[#1a1816] text-base">{food.restaurantName}</h3>
-                                            <span className="bg-[#1a1816] text-white text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-widest">Claimed</span>
+                                ) : (
+                                    foods.map((food, index) => (
+                                        <div
+                                            key={food._id}
+                                            className="brutal-food-card p-5 border-b-[3px] border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#222] cursor-pointer transition-all group"
+                                            onClick={() => {
+                                                setUserLoc([food.latitude, food.longitude]);
+                                            }}
+                                        >
+                                            {/* Card Number & Restaurant Name */}
+                                            <div className="flex items-start gap-3 mb-3">
+                                                <span className="bg-[#ff5722] text-black text-[10px] font-black w-7 h-7 flex items-center justify-center flex-shrink-0 border-[2px] border-black shadow-[2px_2px_0px_#000]">
+                                                    {String(index + 1).padStart(2, '0')}
+                                                </span>
+                                                <div className="min-w-0">
+                                                    <h3 className="font-black text-white text-sm uppercase tracking-tight truncate group-hover:text-[#ff5722] transition-colors">
+                                                        {food.restaurantName}
+                                                    </h3>
+                                                    <p className="text-[#777] text-xs mt-0.5 font-medium truncate">{food.foodName}</p>
+                                                </div>
+                                            </div>
+                                            {/* Card Footer */}
+                                            <div className="flex justify-between items-center mt-3 pt-3 border-t border-[#2a2a2a]">
+                                                <span className="text-[10px] text-[#555] font-black uppercase tracking-widest flex items-center gap-1">
+                                                    <MapPin size={10} /> QTY: {food.quantity}
+                                                </span>
+                                                <span className={`text-[10px] font-black px-2.5 py-1 uppercase tracking-widest border-[2px] ${food.price === 0
+                                                    ? 'bg-[#00e676] text-black border-black shadow-[2px_2px_0px_#000]'
+                                                    : 'bg-[#333] text-white border-[#555]'
+                                                    }`}>
+                                                    {food.price === 0 ? '★ FREE' : `₹${food.price}`}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <p className="text-[#6b6256] text-sm mt-1 font-medium">{food.foodName}</p>
-                                        <p className="text-[10px] text-[#8c7e6a] mt-3 font-bold uppercase tracking-widest flex items-center gap-1"><Phone size={10} /> {food.contactNumber}</p>
+                                    ))
+                                )
+                            ) : (
+                                myClaims.length === 0 ? (
+                                    <div className="p-8 text-center">
+                                        <div className="text-[#555] text-sm font-black uppercase tracking-widest">
+                                            NO CLAIMS YET
+                                        </div>
+                                        <p className="text-[#444] text-xs mt-2 font-mono">Claim food from the map to see it here.</p>
                                     </div>
-                                ))
-                            )
-                        )}
+                                ) : (
+                                    myClaims.map((food) => (
+                                        <div
+                                            key={food._id}
+                                            className="p-5 border-b-[3px] border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#222] cursor-pointer transition-all group"
+                                            onClick={() => {
+                                                setUserLoc([food.latitude, food.longitude]);
+                                            }}
+                                        >
+                                            <div className="flex justify-between items-start mb-2">
+                                                <h3 className="font-black text-white text-sm uppercase tracking-tight group-hover:text-[#ff5722] transition-colors">
+                                                    {food.restaurantName}
+                                                </h3>
+                                                <span className="bg-white text-black text-[9px] font-black px-2 py-1 uppercase tracking-[0.2em] border-[2px] border-black shadow-[2px_2px_0px_#000]">
+                                                    CLAIMED
+                                                </span>
+                                            </div>
+                                            <p className="text-[#777] text-xs font-medium">{food.foodName}</p>
+                                            <p className="text-[10px] text-[#ff5722] mt-3 font-black uppercase tracking-widest flex items-center gap-1.5">
+                                                <Phone size={10} /> {food.contactNumber}
+                                            </p>
+                                        </div>
+                                    ))
+                                )
+                            )}
+                        </div>
+
+                        {/* Sidebar Footer */}
+                        <div className="p-4 border-t-[3px] border-[#333] bg-[#111]">
+                            <p className="text-[9px] text-[#444] font-mono text-center uppercase tracking-widest">
+                                FOOD RESCUE // {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase()}
+                            </p>
+                        </div>
                     </div>
                 )}
 
-                {/* Map Area */}
+                {/* ─── MAP AREA ─── */}
                 <div className="flex-1 relative">
+                    {/* Loading Overlay */}
                     {loading && (
-                        <div className="absolute inset-0 z-50 bg-white/80 flex items-center justify-center">
-                            <div className="text-emerald-600 font-semibold flex items-center gap-2">
-                                <span className="animate-spin text-2xl">↻</span> Locating you & finding food...
+                        <div className="absolute inset-0 z-50 bg-[#1a1a1a] flex flex-col items-center justify-center gap-4">
+                            <div className="brutal-loader w-12 h-12 border-[4px] border-[#333] border-t-[#ff5722] animate-spin"></div>
+                            <div className="text-white font-black text-sm uppercase tracking-[0.3em]">
+                                LOCATING<span className="animate-pulse">...</span>
+                            </div>
+                            <p className="text-[#555] text-[10px] font-mono uppercase tracking-widest">
+                                Finding nearby food sources
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Error Banner */}
+                    {error && (
+                        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-[#ff5722] text-black px-6 py-3 border-[3px] border-black shadow-[4px_4px_0px_#000] flex items-center gap-3 max-w-lg w-full mx-4">
+                            <AlertCircle size={18} className="flex-shrink-0" />
+                            <p className="text-xs font-black uppercase tracking-wide">{error}</p>
+                            <button onClick={() => setError(null)} className="ml-auto hover:opacity-70">
+                                <X size={16} />
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Stats Bar (floating) */}
+                    {!loading && (
+                        <div className="absolute bottom-6 left-6 z-[500] flex gap-2">
+                            <div className="bg-[#1a1a1a] border-[3px] border-black shadow-[4px_4px_0px_#000] px-4 py-2.5 flex items-center gap-2">
+                                <div className="w-2 h-2 bg-[#00e676] animate-pulse"></div>
+                                <span className="text-[10px] font-black text-white uppercase tracking-widest">
+                                    {foods.length} LIVE
+                                </span>
+                            </div>
+                            <div className="bg-[#1a1a1a] border-[3px] border-black shadow-[4px_4px_0px_#000] px-4 py-2.5">
+                                <span className="text-[10px] font-black text-[#ff5722] uppercase tracking-widest">
+                                    {myClaims.length} CLAIMED
+                                </span>
                             </div>
                         </div>
                     )}
 
-                    {error && (
-                        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-amber-100 text-amber-800 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 max-w-md w-full mx-4">
-                            <AlertCircle size={20} />
-                            <p className="text-sm font-medium">{error}</p>
-                        </div>
-                    )}
-
+                    {/* Map */}
                     <MapContainer
                         center={userLoc[0] === 0 ? [51.505, -0.09] : userLoc}
                         zoom={13}
                         scrollWheelZoom={true}
-                        className="h-full w-full z-0"
+                        className="h-full w-full z-0 brutal-map"
                     >
                         <TileLayer
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -311,7 +400,9 @@ export default function UserMap({ user, onLogout }) {
                         {userLoc[0] !== 0 && (
                             <Marker position={userLoc} icon={userIcon}>
                                 <Popup>
-                                    <div className="font-semibold text-gray-800">You are here</div>
+                                    <div className="font-black text-sm text-black uppercase tracking-tight">
+                                        ● YOUR LOCATION
+                                    </div>
                                 </Popup>
                             </Marker>
                         )}
@@ -323,49 +414,79 @@ export default function UserMap({ user, onLogout }) {
                                 position={[food.latitude, food.longitude]}
                                 icon={restaurantIcon}
                             >
-                                <Popup className="food-popup custom-popup">
-                                    <div className="p-2 min-w-[220px]">
-                                        <h3 className="font-black text-xl text-[#1a1816] mb-2 tracking-tight">{food.restaurantName}</h3>
-                                        <div className="text-sm space-y-2 mb-4">
-                                            <p className="flex justify-between"><span className="text-[#8c7e6a] font-bold text-[10px] uppercase tracking-widest mt-1">Food</span> <span className="font-medium text-[#2d2a26] text-right">{food.foodName}</span></p>
-                                            <p className="flex justify-between"><span className="text-[#8c7e6a] font-bold text-[10px] uppercase tracking-widest mt-1">Quantity</span> <span className="font-medium text-[#2d2a26] text-right">{food.quantity}</span></p>
-                                            <p className="flex justify-between border-b border-[#f3f0e8] pb-2">
-                                                <span className="text-[#8c7e6a] font-bold text-[10px] uppercase tracking-widest mt-1">Price</span>
-                                                {food.price === 0 ? (
-                                                    <span className="text-emerald-600 font-black bg-emerald-50 px-2 py-0.5 rounded text-xs">FREE</span>
-                                                ) : (
-                                                    <span className="font-black text-[#1a1816]">₹{food.price}</span>
-                                                )}
+                                <Popup className="brutal-popup">
+                                    <div className="brutal-popup-inner p-1 min-w-[260px]">
+                                        {/* Popup Header */}
+                                        <div className="bg-[#1a1a1a] text-white p-4 -m-4 mb-4 border-b-[3px] border-[#ff5722]">
+                                            <h3 className="font-black text-lg uppercase tracking-tight leading-tight">
+                                                {food.restaurantName}
+                                            </h3>
+                                            <p className="text-[10px] text-[#888] font-mono uppercase tracking-widest mt-1">
+                                                FOOD RESCUE LISTING
                                             </p>
-                                            <p className="flex justify-between pt-1"><span className="text-[#8c7e6a] font-bold text-[10px] uppercase tracking-widest mt-1">Pickup By</span> <span className="font-bold text-[#2d2a26]">{food.pickupTime}</span></p>
-                                            {food.description && <p className="text-[#6b6256] text-xs mt-3 bg-[#fdfaf5] p-2 rounded-lg border border-[#f3f0e8] leading-relaxed">{food.description}</p>}
                                         </div>
 
-                                        <div className="flex flex-col gap-3 mt-5">
-                                            <p className="text-[11px] font-bold text-[#8c7e6a] uppercase tracking-widest flex items-center justify-center gap-1">
-                                                <Phone size={12} /> {food.contactNumber}
+                                        {/* Food Details */}
+                                        <div className="space-y-2.5 mb-4 mt-6">
+                                            <div className="flex justify-between items-center py-1.5 border-b-[2px] border-dashed border-[#e0e0e0]">
+                                                <span className="text-[10px] font-black text-[#888] uppercase tracking-[0.2em]">FOOD</span>
+                                                <span className="font-bold text-[#1a1a1a] text-sm text-right max-w-[160px] truncate">{food.foodName}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center py-1.5 border-b-[2px] border-dashed border-[#e0e0e0]">
+                                                <span className="text-[10px] font-black text-[#888] uppercase tracking-[0.2em]">QTY</span>
+                                                <span className="font-bold text-[#1a1a1a] text-sm">{food.quantity}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center py-1.5 border-b-[2px] border-dashed border-[#e0e0e0]">
+                                                <span className="text-[10px] font-black text-[#888] uppercase tracking-[0.2em]">PRICE</span>
+                                                {food.price === 0 ? (
+                                                    <span className="font-black text-xs bg-[#00e676] text-black px-2.5 py-1 border-[2px] border-black shadow-[2px_2px_0px_#000]">
+                                                        ★ FREE
+                                                    </span>
+                                                ) : (
+                                                    <span className="font-black text-[#1a1a1a] text-base">₹{food.price}</span>
+                                                )}
+                                            </div>
+                                            <div className="flex justify-between items-center py-1.5">
+                                                <span className="text-[10px] font-black text-[#888] uppercase tracking-[0.2em] flex items-center gap-1">
+                                                    <Clock size={10} /> PICKUP
+                                                </span>
+                                                <span className="font-black text-[#1a1a1a] text-sm">{food.pickupTime}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Description */}
+                                        {food.description && (
+                                            <div className="bg-[#f5f0e8] p-3 border-[2px] border-[#e0d8c8] mb-4">
+                                                <p className="text-[11px] text-[#666] leading-relaxed font-medium">{food.description}</p>
+                                            </div>
+                                        )}
+
+                                        {/* Contact & Actions */}
+                                        <div className="space-y-3 mt-4">
+                                            <p className="text-[10px] font-black text-[#888] uppercase tracking-[0.2em] text-center flex items-center justify-center gap-1.5">
+                                                <Phone size={10} /> {food.contactNumber}
                                             </p>
                                             <div className="flex gap-2">
                                                 <a
                                                     href={`tel:${food.contactNumber}`}
-                                                    className="flex-1 flex justify-center items-center gap-1.5 bg-[#fdfaf5] hover:bg-[#f3f0e8] border border-[#efeadc] text-[#2d2a26] py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm"
+                                                    className="flex-1 flex justify-center items-center gap-1.5 bg-white hover:bg-[#f5f0e8] border-[2px] border-black text-black py-2.5 text-[10px] font-black uppercase tracking-widest transition-all shadow-[2px_2px_0px_#000] hover:shadow-[1px_1px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px]"
                                                 >
-                                                    <Phone size={14} /> Call
+                                                    <Phone size={12} /> CALL
                                                 </a>
                                                 <a
                                                     href={`https://wa.me/${food.contactNumber.replace(/[^0-9]/g, '')}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="flex-1 flex justify-center items-center gap-1.5 bg-[#fdfaf5] hover:bg-[#f3f0e8] border border-[#efeadc] text-emerald-700 py-2.5 rounded-xl text-xs font-bold transition-all shadow-sm"
+                                                    className="flex-1 flex justify-center items-center gap-1.5 bg-[#25D366] hover:bg-[#1da851] border-[2px] border-black text-black py-2.5 text-[10px] font-black uppercase tracking-widest transition-all shadow-[2px_2px_0px_#000] hover:shadow-[1px_1px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px]"
                                                 >
-                                                    <MessageCircle size={14} /> WhatsApp
+                                                    <MessageCircle size={12} /> WHATSAPP
                                                 </a>
                                             </div>
                                             <button
                                                 onClick={() => handleClaim(food._id)}
-                                                className="w-full bg-[#1a1816] hover:bg-[#2d2a26] text-white py-3 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-md hover:shadow-lg transition-all mt-1"
+                                                className="w-full bg-[#ff5722] hover:bg-[#e64a19] text-black py-3.5 text-[11px] font-black uppercase tracking-[0.2em] border-[3px] border-black shadow-[4px_4px_0px_#000] hover:shadow-[2px_2px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all"
                                             >
-                                                Claim Food
+                                                ▶ CLAIM THIS FOOD
                                             </button>
                                         </div>
                                     </div>
